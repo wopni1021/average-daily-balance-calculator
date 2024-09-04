@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./Header.scss";
+
 const ROOT = "adb-header";
 
 const Header = () => {
