@@ -1,25 +1,39 @@
 import React, { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Input from "@mui/material/Input";
+import "./MainTable.scss";
+import { styled } from "@mui/material/styles";
 
 function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
   return { name, calories, fat, carbs, protein };
 }
 
-// const rows = [
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-//   createData("Eclair", 262, 16.0, 24, 6.0),
-//   createData("Cupcake", 305, 3.7, 67, 4.3),
-//   createData("Gingerbread", 356, 16.0, 49, 3.9),
-// ];
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 
 const MAX_DATE = 31;
 
@@ -33,6 +47,8 @@ const MAX_DATE = 31;
 const formatNumber = (num: number) => {
   return num.toFixed(2);
 };
+
+const commonInputProps: Partial<TextFieldProps> = { size: "small", variant: "outlined" };
 
 const ROOT = "adb-table";
 
@@ -123,53 +139,66 @@ const MainTable = () => {
   };
 
   return (
-    <TableContainer component={Paper} className={ROOT}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>Value Date</TableCell>
-            <TableCell align="right">Withdrawal</TableCell>
-            <TableCell align="right">Deposit</TableCell>
-            <TableCell align="right">Balance as of the day</TableCell>
-            <TableCell align="right">ADB as of the day</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, index) => (
-            <TableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-              <TableCell component="th" scope="row">
-                Day {index + 1}
-                {index === 0 && <TextField id="standard-basic" label="Initial Balance" variant="standard" onBlur={handleChangeInitialBalance} />}
-              </TableCell>
-              <TableCell align="right">
-                <TextField
-                  id="withdr"
-                  label="Outlined"
-                  variant="outlined"
-                  type="number"
-                  onChange={(e) => {
-                    handleChangeWithDr(e.target.value, index);
-                  }}
-                />
-              </TableCell>
-              <TableCell align="right">
-                <TextField
-                  id="depo"
-                  label="Outlined"
-                  variant="outlined"
-                  type="number"
-                  onChange={(e) => {
-                    handleChangeDepo(e.target.value, index);
-                  }}
-                />
-              </TableCell>
-              <TableCell align="right">{formatNumber(row.balance)}</TableCell>
-              <TableCell align="right">{formatNumber(row.adb)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div className={ROOT}>
+      <div className={`${ROOT}-title`}>Average Daily Balance (ADB) Calculator</div>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+          <TableHead>
+            <StyledTableRow>
+              <StyledTableCell>Value Date</StyledTableCell>
+              <StyledTableCell align="right">Withdrawal</StyledTableCell>
+              <StyledTableCell align="right">Deposit</StyledTableCell>
+              <StyledTableCell align="right">Balance as of the day</StyledTableCell>
+              <StyledTableCell align="right">ADB as of the day</StyledTableCell>
+            </StyledTableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => (
+              <StyledTableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                <StyledTableCell component="th" scope="row">
+                  <div className={`${ROOT}-day-col`}>
+                    <div className={`${ROOT}-day`}>
+                      <div>Day</div> <div className={`${ROOT}-day-num`}>{index + 1}</div>
+                    </div>
+                    {index === 0 && <TextField {...commonInputProps} id="standard-basic" label="Initial Balance" onBlur={handleChangeInitialBalance} />}
+                  </div>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <TextField
+                    {...commonInputProps}
+                    id="withdr"
+                    variant="outlined"
+                    type="number"
+                    onChange={(e) => {
+                      handleChangeWithDr(e.target.value, index);
+                    }}
+                    InputProps={{
+                      inputProps: { style: { textAlign: "right" } }, // Aligns the input text to the right
+                    }}
+                  />
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <TextField
+                    {...commonInputProps}
+                    id="depo"
+                    variant="outlined"
+                    type="number"
+                    onChange={(e) => {
+                      handleChangeDepo(e.target.value, index);
+                    }}
+                    InputProps={{
+                      inputProps: { style: { textAlign: "right" } }, // Aligns the input text to the right
+                    }}
+                  />
+                </StyledTableCell>
+                <StyledTableCell align="right">{formatNumber(row.balance)}</StyledTableCell>
+                <StyledTableCell align="right">{formatNumber(row.adb)}</StyledTableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 

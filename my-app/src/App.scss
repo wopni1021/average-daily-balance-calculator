@@ -1,7 +1,10 @@
 .App {
+  $padding: 30px;
   text-align: center;
-  padding: 12px;
-  height: 100vh;
+  padding: $padding $padding 0 $padding;
+  display: flex;
+  flex-direction: column; /* Stack header and table vertically */
+  height: calc(100vh - $padding); /* Full viewport height */
 }
 
 .App-logo {
@@ -43,8 +46,10 @@
   $headerHeight: 200px;
   &-header {
     height: $headerHeight;
+    white-space: pre-wrap;
   }
   &-table {
-    height: calc(100vh - $headerHeight);
+    flex-grow: 1;
+    height: calc(100% - $headerHeight);
   }
 }
