@@ -12,11 +12,16 @@ import "./MainTable.scss";
 import { styled } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import HelpIcon from "@mui/icons-material/Help";
+import IconButton from "@mui/material/IconButton";
+import Popover from "@mui/material/Popover";
+
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
+import Tooltip from "@mui/material/Tooltip";
 
 interface Row {
   withdraw: number;
@@ -152,7 +157,23 @@ const MainTable = () => {
 
       <div className={`${ROOT}-init`}>
         <div className={`${ROOT}-init-balance`}>
-          <div className={`${ROOT}-init-label`}>Initial Balance</div>
+          <div className={`${ROOT}-init-balance-label`}>
+            <div className={`${ROOT}-init-label`}>Initial Balance</div>
+            <Tooltip
+              className={`${ROOT}-tooltip`}
+              title="The closing balance in the statement of previous month"
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    fontSize: "16px", // Customize the font size
+                    padding: "8px",
+                  },
+                },
+              }}
+            >
+              <HelpIcon />
+            </Tooltip>
+          </div>
           <TextField
             {...commonInputProps}
             id="standard-basic"
@@ -166,7 +187,7 @@ const MainTable = () => {
         </div>
 
         <div className={`${ROOT}-init-day`}>
-          <div className={`${ROOT}-init-label`}>First Day to start with</div>
+          <div className={`${ROOT}-init-label`}>First Day to start with (Optional)</div>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker onChange={handleChangeInitDate} value={initialDate} />
           </LocalizationProvider>
@@ -191,7 +212,25 @@ const MainTable = () => {
                 </div>
               </StyledTableCell>
               <StyledTableCell align="right">Balance as of the day</StyledTableCell>
-              <StyledTableCell align="right">ADB as of the day</StyledTableCell>
+              <StyledTableCell align="right">
+                <div className={`${ROOT}-th`}>
+                  <div>ADB as of the day</div>
+                  <Tooltip
+                    className={`${ROOT}-tooltip`}
+                    title="Do take notes of the number of days in a month to predict the ADB accurately. For example, if you want to calculate the final ADB in April, you should refer to Day 30 or April 30th"
+                    slotProps={{
+                      tooltip: {
+                        sx: {
+                          fontSize: "16px", // Customize the font size
+                          padding: "8px",
+                        },
+                      },
+                    }}
+                  >
+                    <HelpIcon />
+                  </Tooltip>
+                </div>
+              </StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>

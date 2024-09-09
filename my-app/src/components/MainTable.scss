@@ -10,6 +10,11 @@
     text-align: left;
   }
 
+  &-tooltip {
+    fill: lightgrey !important;
+    cursor: pointer;
+  }
+
   &-init {
     display: flex;
     padding-bottom: 30px;
@@ -18,10 +23,14 @@
       font-weight: bold;
       color: rgb(94, 92, 92);
       padding-bottom: 10px;
+      padding-right: 8px;
     }
     &-balance {
       & .MuiTextField-root {
         width: 290px;
+      }
+      &-label {
+        display: flex;
       }
     }
     &-day {
