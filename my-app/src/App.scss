@@ -51,5 +51,6 @@
   &-table {
     flex-grow: 1;
     height: calc(100% - $headerHeight);
+    padding-left: 100px;
   }
 }

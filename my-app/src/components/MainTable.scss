@@ -6,7 +6,7 @@
     font-weight: bold;
     padding: 0 0 30px 0;
     font-size: 30px;
-    color: rgb(163, 159, 159);
+    color: #000;
     text-align: left;
   }
 
@@ -35,6 +35,10 @@
     }
     &-day {
       margin-left: 40px;
+
+      input {
+        padding: 8.5px 14px;
+      }
     }
   }
 

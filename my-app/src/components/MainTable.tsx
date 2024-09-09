@@ -178,7 +178,6 @@ const MainTable = () => {
             {...commonInputProps}
             id="standard-basic"
             onBlur={handleChangeInitialBalance}
-            size="medium"
             InputProps={{
               inputProps: { style: { textAlign: "right" } },
             }}
