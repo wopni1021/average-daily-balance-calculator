@@ -15,6 +15,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import HelpIcon from "@mui/icons-material/Help";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
+import InputAdornment from "@mui/material/InputAdornment";
 
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -79,9 +80,16 @@ const MainTable = () => {
   const [initialBalance, setInitialBalance] = useState<number>(0);
   const [initialDate, setInitialDate] = useState<Dayjs | null>(null);
 
+  /*
+   * Check if the number string is less than 2 decimal places
+   */
+  const isValidDecimal = (value: string) => {
+    return /^\d*\.?\d{0,2}$/.test(value);
+  };
+
   const handleChangeWithDr = (value: string, index: number) => {
     const val = Number(value);
-    if (val > MAX_NUM) return;
+    if (val > MAX_NUM || !isValidDecimal(value)) return;
     setRows((prevRows) => {
       const rows = [] as State;
       let total = 0;
@@ -106,7 +114,7 @@ const MainTable = () => {
 
   const handleChangeDepo = (value: string, index: number) => {
     const val = Number(value);
-    if (val > MAX_NUM) return;
+    if (val > MAX_NUM || !isValidDecimal(value)) return;
     setRows((prevRows) => {
       const rows = [] as State;
       let total = 0;
@@ -252,8 +260,11 @@ const MainTable = () => {
                     onChange={(e) => {
                       handleChangeWithDr(e.target.value, index);
                     }}
-                    InputProps={{
-                      inputProps: { style: { textAlign: "right" } },
+                    slotProps={{
+                      input: {
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        inputProps: { style: { textAlign: "right" } },
+                      },
                     }}
                     value={row.withdraw || ""}
                   />
@@ -267,8 +278,11 @@ const MainTable = () => {
                     onChange={(e) => {
                       handleChangeDepo(e.target.value, index);
                     }}
-                    InputProps={{
-                      inputProps: { style: { textAlign: "right" } }, // Aligns the input text to the right
+                    slotProps={{
+                      input: {
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        inputProps: { style: { textAlign: "right" } },
+                      },
                     }}
                     value={row.depo || ""}
                   />
