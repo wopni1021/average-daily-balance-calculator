@@ -20,6 +20,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
 import Tooltip from "@mui/material/Tooltip";
 
+// types
 interface Row {
   withdraw: number;
   depo: number;
@@ -33,6 +34,7 @@ interface FixedWidthTableCellProps extends TableCellProps {
 
 type State = Array<Row>;
 
+// styling
 const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fixedWidth }) => ({
   width: fixedWidth ? `${fixedWidth}px` : "atuo",
   [`&.${tableCellClasses.head}`]: {
@@ -44,44 +46,46 @@ const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fi
   },
 }));
 
-const VALUE_DATE_WIDTH = 160;
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
 
+// consts
 const MAX_DATE = 31;
 const MAX_NUM = 1000000000;
+const VALUE_DATE_WIDTH = 160;
 
+const ROOT = "adb-table";
+
+const commonInputProps: Partial<TextFieldProps> = { size: "small", variant: "outlined" };
+
+const initialRows = [...Array(MAX_DATE)].map((_, idx) => {
+  return { withdraw: 0, depo: 0, balance: 0, adb: 0 };
+});
+
+/*
+ * Round to 2 decimals
+ */
 const formatNumber = (num: number) => {
   return num.toFixed(2);
 };
 
-const commonInputProps: Partial<TextFieldProps> = { size: "small", variant: "outlined" };
-
-const ROOT = "adb-table";
+/*
+ * Check if the number string is less than 2 decimal places
+ */
+const isValidDecimal = (value: string) => {
+  return /^\d*\.?\d{0,2}$/.test(value);
+};
 
 const MainTable = () => {
-  const initialRows = [...Array(MAX_DATE)].map((_, idx) => {
-    return { withdraw: 0, depo: 0, balance: 0, adb: 0 };
-  });
-
   const [rows, setRows] = useState<State>(initialRows);
   const [initialBalance, setInitialBalance] = useState<number>(0);
   const [initialDate, setInitialDate] = useState<Dayjs | null>(null);
-
-  /*
-   * Check if the number string is less than 2 decimal places
-   */
-  const isValidDecimal = (value: string) => {
-    return /^\d*\.?\d{0,2}$/.test(value);
-  };
 
   const handleChangeWithDr = (value: string, index: number) => {
     const val = Number(value);
@@ -169,7 +173,7 @@ const MainTable = () => {
               slotProps={{
                 tooltip: {
                   sx: {
-                    fontSize: "16px", // Customize the font size
+                    fontSize: "16px",
                     padding: "8px",
                   },
                 },
@@ -224,7 +228,7 @@ const MainTable = () => {
                     slotProps={{
                       tooltip: {
                         sx: {
-                          fontSize: "16px", // Customize the font size
+                          fontSize: "16px",
                           padding: "8px",
                         },
                       },
