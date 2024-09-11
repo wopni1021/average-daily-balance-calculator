@@ -9,21 +9,21 @@ import RateReviewIcon from "@mui/icons-material/RateReview";
 
 const ROOT = "adb-tab";
 
+type Props = {
+  selectedTab: number;
+  handleChange: (event: React.SyntheticEvent, newValue: number) => void;
+};
 // TODO: Display page based on selected tab
-export default function IconTabs() {
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
+const IconTabs = (props: Props) => {
   return (
     <div className={`${ROOT}`}>
-      <Tabs value={value} onChange={handleChange} aria-label="icon tabs example" orientation="vertical">
+      <Tabs value={props.selectedTab} onChange={props.handleChange} aria-label="icon tabs example" orientation="vertical">
         <Tab icon={<HomeIcon />} aria-label="phone" />
         <Tab icon={<HelpCenterIcon />} aria-label="favorite" />
         <Tab icon={<RateReviewIcon />} aria-label="person" />
       </Tabs>
     </div>
   );
-}
+};
+
+export default IconTabs;
