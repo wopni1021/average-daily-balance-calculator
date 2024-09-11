@@ -44,6 +44,12 @@ const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fi
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
+  "&:first-of-type": {
+    paddingLeft: theme.spacing(4), // Left padding for the first cell of each row
+  },
+  "&:last-of-type": {
+    paddingRight: theme.spacing(4), // Right padding for the last cell of each row
+  },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
