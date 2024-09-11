@@ -3,7 +3,7 @@ import "./App.scss";
 import Table from "./components/MainTable";
 import Tab from "./components/Tab";
 import Feedback from "./components/Feedback";
-
+import Header from "./components/Header";
 const App = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -24,8 +24,8 @@ const App = () => {
 
   return (
     <div className="App">
-      <Tab handleChange={handleChangeTab} selectedTab={selectedTab} />
-      {renderPage()}
+      <Header />
+      <main className="main-content">{renderPage()}</main>
     </div>
   );
 };

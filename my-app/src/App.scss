@@ -1,10 +1,35 @@
 .App {
   $padding: 30px;
   text-align: center;
-  padding: $padding $padding 0 $padding;
   display: flex;
   flex-direction: column; /* Stack header and table vertically */
-  height: calc(100vh - $padding); /* Full viewport height */
+  height: 100vh;
+  overflow-y: auto;
+
+  .header {
+    background-color: black;
+    background-image: url("./header-bg.svg"); /* Icons by SVGBackgrounds.com */
+    background-size: cover;
+    background-repeat: no-repeat; /* Prevents the background from repeating */
+    background-position: center; /* Centers the SVG */
+    color: white;
+    padding: 50px 20px; /* Padding for top/bottom and sides */
+    text-align: center;
+    position: relative;
+    min-height: 256px;
+    z-index: 1; /* Stays on top of other content */
+  }
+
+  .main-content {
+    position: relative;
+    z-index: 2;
+    background-color: white;
+    margin-top: -150px; /* Negative margin to overlap header */
+    display: flex;
+    justify-content: center; /* Centers content horizontally */
+    width: 1000px;
+    align-self: center;
+  }
 }
 
 .App-logo {
@@ -18,17 +43,6 @@
   }
 }
 
-/* .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-} */
-
 .App-link {
   color: #61dafb;
 }
@@ -39,18 +53,5 @@
   }
   to {
     transform: rotate(360deg);
-  }
-}
-
-.adb {
-  $headerHeight: 200px;
-  &-header {
-    height: $headerHeight;
-    white-space: pre-wrap;
-  }
-  &-table {
-    flex-grow: 1;
-    height: calc(100% - $headerHeight);
-    padding-left: 100px;
   }
 }

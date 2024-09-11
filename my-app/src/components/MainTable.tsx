@@ -36,10 +36,10 @@ type State = Array<Row>;
 
 // styling
 const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fixedWidth }) => ({
-  width: fixedWidth ? `${fixedWidth}px` : "atuo",
+  width: fixedWidth ? `${fixedWidth}px` : "auto",
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.action.hover,
+    color: "#333",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -47,10 +47,10 @@ const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fi
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
+  "&:nth-of-type(even)": {
     backgroundColor: theme.palette.action.hover,
   },
-  "&:last-child td, &:last-child th": {
+  "td, th": {
     border: 0,
   },
 }));
@@ -161,8 +161,6 @@ const MainTable = () => {
 
   return (
     <div className={ROOT}>
-      <div className={`${ROOT}-title`}>Average Daily Balance (ADB) Calculator</div>
-
       <div className={`${ROOT}-init`}>
         <div className={`${ROOT}-init-balance`}>
           <div className={`${ROOT}-init-balance-label`}>
@@ -194,7 +192,7 @@ const MainTable = () => {
         </div>
 
         <div className={`${ROOT}-init-day`}>
-          <div className={`${ROOT}-init-label`}>First Day to start with (Optional)</div>
+          <div className={`${ROOT}-init-label`}>Start Date</div>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker onChange={handleChangeInitDate} value={initialDate} />
           </LocalizationProvider>
@@ -218,10 +216,10 @@ const MainTable = () => {
                   <span>Deposit</span>
                 </div>
               </StyledTableCell>
-              <StyledTableCell align="right">Balance as of the day</StyledTableCell>
+              <StyledTableCell align="right">Balance</StyledTableCell>
               <StyledTableCell align="right">
                 <div className={`${ROOT}-th`}>
-                  <div>ADB as of the day</div>
+                  <div>Average Daily Balance</div>
                   <Tooltip
                     className={`${ROOT}-tooltip`}
                     title="Do take notes of the number of days in a month to predict the ADB accurately. For example, if you want to calculate the final ADB in April, you should refer to Day 30 or April 30th"
@@ -262,7 +260,7 @@ const MainTable = () => {
                     }}
                     slotProps={{
                       input: {
-                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">- $</InputAdornment>,
                         inputProps: { style: { textAlign: "right" } },
                       },
                     }}
@@ -280,7 +278,7 @@ const MainTable = () => {
                     }}
                     slotProps={{
                       input: {
-                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">+ $</InputAdornment>,
                         inputProps: { style: { textAlign: "right" } },
                       },
                     }}
