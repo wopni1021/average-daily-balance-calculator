@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.scss";
 import Table from "./components/MainTable";
 import Tab from "./components/Tab";
+import Feedback from "./components/Feedback";
 
 const App = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -17,7 +18,7 @@ const App = () => {
       case 1:
         return null;
       case 2:
-        return null;
+        return <Feedback />;
     }
   };
 
