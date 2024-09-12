@@ -7,7 +7,7 @@ import Header from "./components/Header";
 const App = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChangeTab = (newValue: number) => {
     setSelectedTab(newValue);
   };
 
@@ -26,6 +26,7 @@ const App = () => {
     <div className="App">
       <Header />
       <main className="main-content">{renderPage()}</main>
+      <Tab handleChange={handleChangeTab} />
     </div>
   );
 };

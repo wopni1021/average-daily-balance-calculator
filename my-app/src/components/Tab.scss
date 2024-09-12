@@ -1,14 +1,19 @@
 .adb-tab {
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: 16px;
   left: 0;
-  height: 100vh;
+  z-index: 3;
   width: 100px;
-  background-color: rgb(241, 239, 239);
 
   svg {
-    width: 30px;
-    height: 30px;
+    width: 22px;
+    height: 22px;
     fill: #000;
+    background-color: white;
+  }
+
+  .MuiAvatar-root {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 }
