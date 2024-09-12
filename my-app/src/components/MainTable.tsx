@@ -17,7 +17,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import Tooltip from "@mui/material/Tooltip";
 
 // types
@@ -89,9 +89,10 @@ const isValidDecimal = (value: string) => {
 };
 
 const MainTable = () => {
+  const firstDate = dayjs().date(1);
   const [rows, setRows] = useState<State>(initialRows);
   const [initialBalance, setInitialBalance] = useState<number>(0);
-  const [initialDate, setInitialDate] = useState<Dayjs | null>(null);
+  const [initialDate, setInitialDate] = useState<Dayjs | null>(firstDate);
 
   const handleChangeWithDr = (value: string, index: number) => {
     const val = Number(value);

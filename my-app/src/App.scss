@@ -1,10 +1,10 @@
 .App {
-  $padding: 30px;
   text-align: center;
   display: flex;
   flex-direction: column; /* Stack header and table vertically */
   height: 100vh;
   overflow-y: auto;
+  padding-bottom: 20px;
 
   .header {
     background-color: black;
@@ -21,6 +21,7 @@
   }
 
   .main-content {
+    border-radius: 2px;
     position: relative;
     z-index: 2;
     background-color: white;
@@ -28,6 +29,7 @@
     display: flex;
     justify-content: center; /* Centers content horizontally */
     width: 1000px;
+    padding-bottom: 20px;
     align-self: center;
   }
 }
