@@ -4,7 +4,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses, TableCellProps } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import TableRow, { TableRowProps } from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import "./MainTable.scss";
@@ -13,12 +13,19 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import HelpIcon from "@mui/icons-material/Help";
 import InputAdornment from "@mui/material/InputAdornment";
-
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import IconButton from "@mui/material/IconButton";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import Tooltip from "@mui/material/Tooltip";
+import { ReactComponent as AddSubtItemIcon } from "../Icons/new-sub-item.svg";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+// import { ReactComponent as Test } from "../Icons/header-bg.svg";
 
 // types
 interface Row {
@@ -26,10 +33,15 @@ interface Row {
   depo: number;
   balance: number;
   adb: number;
+  day: number;
 }
 
 interface FixedWidthTableCellProps extends TableCellProps {
   fixedWidth?: number; // Optional custom prop for fixed width
+}
+
+interface StyledTableRow extends TableRowProps {
+  day?: number;
 }
 
 type State = Array<Row>;
@@ -44,18 +56,22 @@ const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fi
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
-  "&:first-of-type": {
-    paddingLeft: theme.spacing(4), // Left padding for the first cell of each row
+  "&:first-child": {
+    "&:first-of-type": {
+      paddingLeft: theme.spacing(4), // Left padding for the first cell of each row
+      paddingRight: 0,
+    },
   },
-  "&:last-of-type": {
-    paddingRight: theme.spacing(4), // Right padding for the last cell of each row
+  "&:last-child": {
+    "&:last-of-type": {
+      paddingRight: theme.spacing(4), // Right padding for the last cell of each row
+      paddingLeft: 0,
+    },
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(even)": {
-    backgroundColor: theme.palette.action.hover,
-  },
+const StyledTableRow = styled(TableRow)<StyledTableRow>(({ theme, day }) => ({
+  backgroundColor: day && day % 2 === 0 ? theme.palette.action.hover : "white",
   "td, th": {
     border: 0,
   },
@@ -71,7 +87,7 @@ const ROOT = "adb-table";
 const commonInputProps: Partial<TextFieldProps> = { size: "small", variant: "outlined" };
 
 const initialRows = [...Array(MAX_DATE)].map((_, idx) => {
-  return { withdraw: 0, depo: 0, balance: 0, adb: 0 };
+  return { withdraw: 0, depo: 0, balance: 0, adb: 0, day: idx + 1, subDay: 1 };
 });
 
 /*
@@ -101,8 +117,10 @@ const MainTable = () => {
       const rows = [] as State;
       let total = 0;
       prevRows.forEach((row, idx) => {
+        const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
+
         if (idx < index) {
-          total += row.balance;
+          if (isLastSubRow) total += row.balance;
           rows.push(row);
         } else {
           const prevBalance = rows[idx - 1]?.balance ?? initialBalance;
@@ -110,9 +128,9 @@ const MainTable = () => {
           const newWithdraw = isCurrentRow ? val : row.withdraw;
           const newDepo = row.depo;
           const newBalance = prevBalance - newWithdraw + newDepo;
-          total += newBalance;
-          const newAdb = total / (idx + 1);
-          rows.push({ withdraw: newWithdraw, depo: newDepo, balance: newBalance, adb: newAdb });
+          if (isLastSubRow) total += newBalance;
+          const newAdb = total / row.day;
+          rows.push({ withdraw: newWithdraw, depo: newDepo, balance: newBalance, adb: newAdb, day: row.day });
         }
       });
       return rows;
@@ -126,8 +144,10 @@ const MainTable = () => {
       const rows = [] as State;
       let total = 0;
       prevRows.forEach((row, idx) => {
+        const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
+
         if (idx < index) {
-          total += row.balance;
+          if (isLastSubRow) total += row.balance;
           rows.push(row);
         } else {
           const prevBalance = rows[idx - 1]?.balance ?? initialBalance;
@@ -135,9 +155,9 @@ const MainTable = () => {
           const newDepo = isCurrentRow ? val : row.depo;
           const newWithdraw = row.withdraw;
           const newBalance = prevBalance - newWithdraw + newDepo;
-          total += newBalance;
-          const newAdb = total / (idx + 1);
-          rows.push({ withdraw: newWithdraw, depo: newDepo, balance: newBalance, adb: newAdb });
+          if (isLastSubRow) total += newBalance;
+          const newAdb = total / row.day;
+          rows.push({ withdraw: newWithdraw, depo: newDepo, balance: newBalance, adb: newAdb, day: row.day });
         }
       });
       return rows;
@@ -154,9 +174,10 @@ const MainTable = () => {
       prevRows.forEach((row, idx) => {
         const prevBalance = rows[idx - 1]?.balance ?? val;
         const newBalance = prevBalance - row.withdraw + row.depo;
-        total += newBalance;
-        const newAdb = total / (idx + 1);
-        rows.push({ withdraw: row.withdraw, depo: row.depo, balance: newBalance, adb: newAdb });
+        const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
+        if (isLastSubRow) total += newBalance;
+        const newAdb = total / row.day;
+        rows.push({ withdraw: row.withdraw, depo: row.depo, balance: newBalance, adb: newAdb, day: row.day });
       });
       return rows;
     });
@@ -164,6 +185,106 @@ const MainTable = () => {
 
   const handleChangeInitDate = (value: Dayjs | null) => {
     setInitialDate(value);
+  };
+
+  const onClickAddTransaction = (index: number) => {
+    setRows((prevRows) => {
+      const parentRow = prevRows[index];
+      const childRow = { ...parentRow, withdraw: 0, depo: 0 };
+      const newState = [...prevRows.slice(0, index + 1), childRow, ...prevRows.slice(index + 1)];
+      return newState;
+    });
+  };
+
+  const renderRows = () => {
+    const allRows = rows.map((row, index) => (
+      <StyledTableRow key={`${row.day}-${index}`} sx={{ "&:last-child td, &:last-child th": { border: 0 } }} day={row.day}>
+        <StyledTableCell component="th" scope="row" fixedWidth={VALUE_DATE_WIDTH}>
+          {row.day !== rows[index - 1]?.day && (
+            <div className={`${ROOT}-value-date`}>
+              <div className={`${ROOT}-value-date-day`}>
+                <div>Day</div> <div className={`${ROOT}-value-date-day-num`}>{row.day}</div>
+              </div>
+              {initialDate?.isValid() && (
+                <span className={`${ROOT}-value-date-date`}>
+                  {initialDate
+                    .add(row.day - 1, "day")
+                    .toDate()
+                    .toLocaleDateString()}
+                </span>
+              )}
+            </div>
+          )}
+        </StyledTableCell>
+        <StyledTableCell align="right">
+          <TextField
+            {...commonInputProps}
+            id="withdr"
+            variant="outlined"
+            type="number"
+            onChange={(e) => {
+              handleChangeWithDr(e.target.value, index);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: <InputAdornment position="start">- $</InputAdornment>,
+                inputProps: { style: { textAlign: "right" } },
+              },
+            }}
+            value={row.withdraw || ""}
+          />
+        </StyledTableCell>
+        <StyledTableCell align="right">
+          <TextField
+            {...commonInputProps}
+            id="depo"
+            variant="outlined"
+            type="number"
+            onChange={(e) => {
+              handleChangeDepo(e.target.value, index);
+            }}
+            slotProps={{
+              input: {
+                startAdornment: <InputAdornment position="start">+ $</InputAdornment>,
+                inputProps: { style: { textAlign: "right" } },
+              },
+            }}
+            value={row.depo || ""}
+          />
+        </StyledTableCell>
+        <StyledTableCell align="right">{row.day !== rows[index + 1]?.day && formatNumber(row.balance)}</StyledTableCell>
+        <StyledTableCell align="right">{row.day !== rows[index + 1]?.day && formatNumber(row.adb)}</StyledTableCell>
+        <StyledTableCell align="right">
+          {row.day !== rows[index + 1]?.day && (
+            <Tooltip
+              className={`${ROOT}-tooltip`}
+              title="Add more transaction to the day"
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    fontSize: "16px",
+                    padding: "8px",
+                  },
+                },
+              }}
+            >
+              <IconButton
+                onClick={() => {
+                  onClickAddTransaction(index);
+                }}
+                size="small"
+                sx={{ ml: 2 }}
+                aria-haspopup="false"
+                className={`${ROOT}-add-item`}
+              >
+                <AddCircleOutlineOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </StyledTableCell>
+      </StyledTableRow>
+    ));
+    return allRows;
   };
 
   return (
@@ -213,13 +334,11 @@ const MainTable = () => {
               <StyledTableCell fixedWidth={VALUE_DATE_WIDTH}>Value Date</StyledTableCell>
               <StyledTableCell align="right">
                 <div className={`${ROOT}-th`}>
-                  <RemoveIcon />
                   <span>Withdrawal</span>
                 </div>
               </StyledTableCell>
               <StyledTableCell align="right">
                 <div className={`${ROOT}-th`}>
-                  <AddIcon />
                   <span>Deposit</span>
                 </div>
               </StyledTableCell>
@@ -243,60 +362,10 @@ const MainTable = () => {
                   </Tooltip>
                 </div>
               </StyledTableCell>
+              <StyledTableCell align="right" />
             </StyledTableRow>
           </TableHead>
-          <TableBody>
-            {rows.map((row, index) => (
-              <StyledTableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                <StyledTableCell component="th" scope="row" fixedWidth={VALUE_DATE_WIDTH}>
-                  <div className={`${ROOT}-value-date`}>
-                    <div className={`${ROOT}-value-date-day`}>
-                      <div>Day</div> <div className={`${ROOT}-value-date-day-num`}>{index + 1}</div>
-                    </div>
-                    {initialDate?.isValid() && <span className={`${ROOT}-value-date-date`}>{initialDate.add(index, "day").toDate().toLocaleDateString()}</span>}
-                  </div>
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <TextField
-                    {...commonInputProps}
-                    id="withdr"
-                    variant="outlined"
-                    type="number"
-                    onChange={(e) => {
-                      handleChangeWithDr(e.target.value, index);
-                    }}
-                    slotProps={{
-                      input: {
-                        startAdornment: <InputAdornment position="start">- $</InputAdornment>,
-                        inputProps: { style: { textAlign: "right" } },
-                      },
-                    }}
-                    value={row.withdraw || ""}
-                  />
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <TextField
-                    {...commonInputProps}
-                    id="depo"
-                    variant="outlined"
-                    type="number"
-                    onChange={(e) => {
-                      handleChangeDepo(e.target.value, index);
-                    }}
-                    slotProps={{
-                      input: {
-                        startAdornment: <InputAdornment position="start">+ $</InputAdornment>,
-                        inputProps: { style: { textAlign: "right" } },
-                      },
-                    }}
-                    value={row.depo || ""}
-                  />
-                </StyledTableCell>
-                <StyledTableCell align="right">{formatNumber(row.balance)}</StyledTableCell>
-                <StyledTableCell align="right">{formatNumber(row.adb)}</StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
+          <TableBody>{renderRows()}</TableBody>
         </Table>
       </TableContainer>
     </div>
