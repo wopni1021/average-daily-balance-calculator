@@ -9,23 +9,15 @@ import Paper from "@mui/material/Paper";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import "./MainTable.scss";
 import { styled } from "@mui/material/styles";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import HelpIcon from "@mui/icons-material/Help";
 import InputAdornment from "@mui/material/InputAdornment";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import IconButton from "@mui/material/IconButton";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import Tooltip from "@mui/material/Tooltip";
-import { ReactComponent as AddSubtItemIcon } from "../Icons/new-sub-item.svg";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-// import { ReactComponent as Test } from "../Icons/header-bg.svg";
 
 // types
 interface Row {
