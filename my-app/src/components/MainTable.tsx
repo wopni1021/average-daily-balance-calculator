@@ -35,7 +35,7 @@ interface FixedWidthTableCellProps extends TableCellProps {
   fixedWidth?: number; // Optional custom prop for fixed width
 }
 
-interface StyledTableRow extends TableRowProps {
+interface StyledRow extends TableRowProps {
   day?: number;
 }
 
@@ -67,7 +67,7 @@ const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(
   })
 );
 
-const StyledTableRow = styled(TableRow)<StyledTableRow>(({ theme, day }) => ({
+const StyledTableRow = styled(TableRow)<StyledRow>(({ theme, day }) => ({
   backgroundColor: day && day % 2 === 0 ? theme.palette.action.hover : 'white',
   'td, th': {
     border: 0,
