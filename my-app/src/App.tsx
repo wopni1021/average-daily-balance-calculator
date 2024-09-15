@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import "./App.scss";
-import Table from "./components/MainTable";
-import Tab from "./components/Tab";
-import Feedback from "./components/Feedback";
-import Header from "./components/Header";
+import React, { useState } from 'react';
+import './App.scss';
+import Table from './components/MainTable';
+import Tab from './components/Tab';
+import Feedback from './components/Feedback';
+import Header from './components/Header';
 const App = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -19,6 +19,8 @@ const App = () => {
         return null;
       case 2:
         return <Feedback />;
+      default:
+        return <Table />;
     }
   };
 

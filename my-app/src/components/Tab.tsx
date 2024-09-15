@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react';
 
-import HomeIcon from "@mui/icons-material/Home";
-import "./Tab.scss";
-import HelpCenterIcon from "@mui/icons-material/HelpCenter";
-import RateReviewIcon from "@mui/icons-material/RateReview";
+import HomeIcon from '@mui/icons-material/Home';
+import './Tab.scss';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 
-import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from '@mui/icons-material/Menu';
 
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import IconButton from "@mui/material/IconButton";
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import IconButton from '@mui/material/IconButton';
 
-const ROOT = "adb-tab";
+const ROOT = 'adb-tab';
 
 type Props = {
   handleChange: (newValue: number) => void;
@@ -37,7 +37,14 @@ const IconTabs = (props: Props) => {
 
   return (
     <div className={`${ROOT}`}>
-      <IconButton onClick={handleClick} size="small" sx={{ ml: 2 }} aria-controls={open ? "account-menu" : undefined} aria-haspopup="true" aria-expanded={open ? "true" : undefined}>
+      <IconButton
+        onClick={handleClick}
+        size="small"
+        sx={{ ml: 2 }}
+        aria-controls={open ? 'account-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+      >
         <Avatar sx={{ width: 32, height: 32 }}>
           <MenuIcon />
         </Avatar>
@@ -52,32 +59,32 @@ const IconTabs = (props: Props) => {
           paper: {
             elevation: 0,
             sx: {
-              overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
               mt: 1.5,
-              "& .MuiAvatar-root": {
+              '& .MuiAvatar-root': {
                 width: 32,
                 height: 32,
                 ml: -0.5,
                 mr: 1,
               },
-              "&::before": {
+              '&::before': {
                 content: '""',
-                display: "block",
-                position: "absolute",
+                display: 'block',
+                position: 'absolute',
                 top: 0,
                 left: 34,
                 width: 10,
                 height: 10,
-                bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
                 zIndex: 0,
               },
             },
           },
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
       >
         <MenuItem onClick={() => onClickMenuItem(0)}>
           <ListItemIcon>

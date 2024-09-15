@@ -1,23 +1,26 @@
-import React, { useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses, TableCellProps } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow, { TableRowProps } from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import TextField, { TextFieldProps } from "@mui/material/TextField";
-import "./MainTable.scss";
-import { styled } from "@mui/material/styles";
-import HelpIcon from "@mui/icons-material/Help";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs, { Dayjs } from "dayjs";
-import Tooltip from "@mui/material/Tooltip";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import React, { useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, {
+  tableCellClasses,
+  TableCellProps,
+} from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow, { TableRowProps } from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
+import './MainTable.scss';
+import { styled } from '@mui/material/styles';
+import HelpIcon from '@mui/icons-material/Help';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs, { Dayjs } from 'dayjs';
+import Tooltip from '@mui/material/Tooltip';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
 // types
 interface Row {
@@ -39,32 +42,34 @@ interface StyledTableRow extends TableRowProps {
 type State = Array<Row>;
 
 // styling
-const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(({ theme, fixedWidth }) => ({
-  width: fixedWidth ? `${fixedWidth}px` : "auto",
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.action.hover,
-    color: "#333",
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-  "&:first-child": {
-    "&:first-of-type": {
-      paddingLeft: theme.spacing(4), // Left padding for the first cell of each row
-      paddingRight: 0,
+const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(
+  ({ theme, fixedWidth }) => ({
+    width: fixedWidth ? `${fixedWidth}px` : 'auto',
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.action.hover,
+      color: '#333',
     },
-  },
-  "&:last-child": {
-    "&:last-of-type": {
-      paddingRight: theme.spacing(4), // Right padding for the last cell of each row
-      paddingLeft: 0,
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
     },
-  },
-}));
+    '&:first-child': {
+      '&:first-of-type': {
+        paddingLeft: theme.spacing(4), // Left padding for the first cell of each row
+        paddingRight: 0,
+      },
+    },
+    '&:last-child': {
+      '&:last-of-type': {
+        paddingRight: theme.spacing(4), // Right padding for the last cell of each row
+        paddingLeft: 0,
+      },
+    },
+  })
+);
 
 const StyledTableRow = styled(TableRow)<StyledTableRow>(({ theme, day }) => ({
-  backgroundColor: day && day % 2 === 0 ? theme.palette.action.hover : "white",
-  "td, th": {
+  backgroundColor: day && day % 2 === 0 ? theme.palette.action.hover : 'white',
+  'td, th': {
     border: 0,
   },
 }));
@@ -74,9 +79,12 @@ const MAX_DATE = 31;
 const MAX_NUM = 1000000000;
 const VALUE_DATE_WIDTH = 160;
 
-const ROOT = "adb-table";
+const ROOT = 'adb-table';
 
-const commonInputProps: Partial<TextFieldProps> = { size: "small", variant: "outlined" };
+const commonInputProps: Partial<TextFieldProps> = {
+  size: 'small',
+  variant: 'outlined',
+};
 
 const initialRows = [...Array(MAX_DATE)].map((_, idx) => {
   return { withdraw: 0, depo: 0, balance: 0, adb: 0, day: idx + 1, subDay: 1 };
@@ -122,7 +130,13 @@ const MainTable = () => {
           const newBalance = prevBalance - newWithdraw + newDepo;
           if (isLastSubRow) total += newBalance;
           const newAdb = total / row.day;
-          rows.push({ withdraw: newWithdraw, depo: newDepo, balance: newBalance, adb: newAdb, day: row.day });
+          rows.push({
+            withdraw: newWithdraw,
+            depo: newDepo,
+            balance: newBalance,
+            adb: newAdb,
+            day: row.day,
+          });
         }
       });
       return rows;
@@ -149,14 +163,22 @@ const MainTable = () => {
           const newBalance = prevBalance - newWithdraw + newDepo;
           if (isLastSubRow) total += newBalance;
           const newAdb = total / row.day;
-          rows.push({ withdraw: newWithdraw, depo: newDepo, balance: newBalance, adb: newAdb, day: row.day });
+          rows.push({
+            withdraw: newWithdraw,
+            depo: newDepo,
+            balance: newBalance,
+            adb: newAdb,
+            day: row.day,
+          });
         }
       });
       return rows;
     });
   };
 
-  const handleChangeInitialBalance = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleChangeInitialBalance = (
+    e: React.FocusEvent<HTMLInputElement>
+  ) => {
     const val = Number(e.target.value);
     setInitialBalance(val);
 
@@ -169,7 +191,13 @@ const MainTable = () => {
         const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
         if (isLastSubRow) total += newBalance;
         const newAdb = total / row.day;
-        rows.push({ withdraw: row.withdraw, depo: row.depo, balance: newBalance, adb: newAdb, day: row.day });
+        rows.push({
+          withdraw: row.withdraw,
+          depo: row.depo,
+          balance: newBalance,
+          adb: newAdb,
+          day: row.day,
+        });
       });
       return rows;
     });
@@ -183,24 +211,37 @@ const MainTable = () => {
     setRows((prevRows) => {
       const parentRow = prevRows[index];
       const childRow = { ...parentRow, withdraw: 0, depo: 0 };
-      const newState = [...prevRows.slice(0, index + 1), childRow, ...prevRows.slice(index + 1)];
+      const newState = [
+        ...prevRows.slice(0, index + 1),
+        childRow,
+        ...prevRows.slice(index + 1),
+      ];
       return newState;
     });
   };
 
   const renderRows = () => {
     const allRows = rows.map((row, index) => (
-      <StyledTableRow key={`${row.day}-${index}`} sx={{ "&:last-child td, &:last-child th": { border: 0 } }} day={row.day}>
-        <StyledTableCell component="th" scope="row" fixedWidth={VALUE_DATE_WIDTH}>
+      <StyledTableRow
+        key={`${row.day}-${index}`}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        day={row.day}
+      >
+        <StyledTableCell
+          component="th"
+          scope="row"
+          fixedWidth={VALUE_DATE_WIDTH}
+        >
           {row.day !== rows[index - 1]?.day && (
             <div className={`${ROOT}-value-date`}>
               <div className={`${ROOT}-value-date-day`}>
-                <div>Day</div> <div className={`${ROOT}-value-date-day-num`}>{row.day}</div>
+                <div>Day</div>{' '}
+                <div className={`${ROOT}-value-date-day-num`}>{row.day}</div>
               </div>
               {initialDate?.isValid() && (
                 <span className={`${ROOT}-value-date-date`}>
                   {initialDate
-                    .add(row.day - 1, "day")
+                    .add(row.day - 1, 'day')
                     .toDate()
                     .toLocaleDateString()}
                 </span>
@@ -219,11 +260,13 @@ const MainTable = () => {
             }}
             slotProps={{
               input: {
-                startAdornment: <InputAdornment position="start">- $</InputAdornment>,
-                inputProps: { style: { textAlign: "right" } },
+                startAdornment: (
+                  <InputAdornment position="start">- $</InputAdornment>
+                ),
+                inputProps: { style: { textAlign: 'right' } },
               },
             }}
-            value={row.withdraw || ""}
+            value={row.withdraw || ''}
           />
         </StyledTableCell>
         <StyledTableCell align="right">
@@ -237,15 +280,21 @@ const MainTable = () => {
             }}
             slotProps={{
               input: {
-                startAdornment: <InputAdornment position="start">+ $</InputAdornment>,
-                inputProps: { style: { textAlign: "right" } },
+                startAdornment: (
+                  <InputAdornment position="start">+ $</InputAdornment>
+                ),
+                inputProps: { style: { textAlign: 'right' } },
               },
             }}
-            value={row.depo || ""}
+            value={row.depo || ''}
           />
         </StyledTableCell>
-        <StyledTableCell align="right">{row.day !== rows[index + 1]?.day && formatNumber(row.balance)}</StyledTableCell>
-        <StyledTableCell align="right">{row.day !== rows[index + 1]?.day && formatNumber(row.adb)}</StyledTableCell>
+        <StyledTableCell align="right">
+          {row.day !== rows[index + 1]?.day && formatNumber(row.balance)}
+        </StyledTableCell>
+        <StyledTableCell align="right">
+          {row.day !== rows[index + 1]?.day && formatNumber(row.adb)}
+        </StyledTableCell>
         <StyledTableCell align="right">
           {row.day !== rows[index + 1]?.day && (
             <Tooltip
@@ -254,8 +303,8 @@ const MainTable = () => {
               slotProps={{
                 tooltip: {
                   sx: {
-                    fontSize: "16px",
-                    padding: "8px",
+                    fontSize: '16px',
+                    padding: '8px',
                   },
                 },
               }}
@@ -291,8 +340,8 @@ const MainTable = () => {
               slotProps={{
                 tooltip: {
                   sx: {
-                    fontSize: "16px",
-                    padding: "8px",
+                    fontSize: '16px',
+                    padding: '8px',
                   },
                 },
               }}
@@ -305,7 +354,7 @@ const MainTable = () => {
             id="standard-basic"
             onBlur={handleChangeInitialBalance}
             InputProps={{
-              inputProps: { style: { textAlign: "right" } },
+              inputProps: { style: { textAlign: 'right' } },
             }}
             type="number"
           />
@@ -323,7 +372,9 @@ const MainTable = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell fixedWidth={VALUE_DATE_WIDTH}>Value Date</StyledTableCell>
+              <StyledTableCell fixedWidth={VALUE_DATE_WIDTH}>
+                Value Date
+              </StyledTableCell>
               <StyledTableCell align="right">
                 <div className={`${ROOT}-th`}>
                   <span>Withdrawal</span>
@@ -344,8 +395,8 @@ const MainTable = () => {
                     slotProps={{
                       tooltip: {
                         sx: {
-                          fontSize: "16px",
-                          padding: "8px",
+                          fontSize: '16px',
+                          padding: '8px',
                         },
                       },
                     }}
