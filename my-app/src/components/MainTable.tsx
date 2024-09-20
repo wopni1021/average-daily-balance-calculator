@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, {
@@ -18,19 +18,13 @@ import IconButton from '@mui/material/IconButton';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import Tooltip from '@mui/material/Tooltip';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import CalculationPanel from './CalculationPanel';
+import { Rows, InitialDate } from '../types';
 
 // types
-interface Row {
-  withdraw: number;
-  depo: number;
-  balance: number;
-  adb: number;
-  day: number;
-}
-
 interface FixedWidthTableCellProps extends TableCellProps {
   fixedWidth?: number; // Optional custom prop for fixed width
 }
@@ -38,8 +32,6 @@ interface FixedWidthTableCellProps extends TableCellProps {
 interface StyledRow extends TableRowProps {
   day?: number;
 }
-
-type State = Array<Row>;
 
 // styling
 const StyledTableCell = styled(TableCell)<FixedWidthTableCellProps>(
@@ -106,15 +98,15 @@ const isValidDecimal = (value: string) => {
 
 const MainTable = () => {
   const firstDate = dayjs().date(1);
-  const [rows, setRows] = useState<State>(initialRows);
+  const [rows, setRows] = useState<Rows>(initialRows);
   const [initialBalance, setInitialBalance] = useState<number>(0);
-  const [initialDate, setInitialDate] = useState<Dayjs | null>(firstDate);
+  const [initialDate, setInitialDate] = useState<InitialDate>(firstDate);
 
   const handleChangeWithDr = (value: string, index: number) => {
     const val = Number(value);
     if (val > MAX_NUM || !isValidDecimal(value)) return;
     setRows((prevRows) => {
-      const rows = [] as State;
+      const rows = [] as Rows;
       let total = 0;
       prevRows.forEach((row, idx) => {
         const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
@@ -147,7 +139,7 @@ const MainTable = () => {
     const val = Number(value);
     if (val > MAX_NUM || !isValidDecimal(value)) return;
     setRows((prevRows) => {
-      const rows = [] as State;
+      const rows = [] as Rows;
       let total = 0;
       prevRows.forEach((row, idx) => {
         const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
@@ -183,7 +175,7 @@ const MainTable = () => {
     setInitialBalance(val);
 
     setRows((prevRows) => {
-      const rows = [] as State;
+      const rows = [] as Rows;
       let total = 0;
       prevRows.forEach((row, idx) => {
         const prevBalance = rows[idx - 1]?.balance ?? val;
@@ -203,7 +195,7 @@ const MainTable = () => {
     });
   };
 
-  const handleChangeInitDate = (value: Dayjs | null) => {
+  const handleChangeInitDate = (value: InitialDate) => {
     setInitialDate(value);
   };
 
@@ -328,7 +320,7 @@ const MainTable = () => {
     return allRows;
   };
 
-  return (
+  const table = (
     <div className={ROOT}>
       <div className={`${ROOT}-init`}>
         <div className={`${ROOT}-init-balance`}>
@@ -353,8 +345,13 @@ const MainTable = () => {
             {...commonInputProps}
             id="standard-basic"
             onBlur={handleChangeInitialBalance}
-            InputProps={{
-              inputProps: { style: { textAlign: 'right' } },
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+                inputProps: { style: { textAlign: 'right' } },
+              },
             }}
             type="number"
           />
@@ -412,6 +409,15 @@ const MainTable = () => {
         </Table>
       </TableContainer>
     </div>
+  );
+
+  const infoPanel = <CalculationPanel data={rows} initialDate={initialDate} />;
+
+  return (
+    <>
+      {table}
+      {infoPanel}
+    </>
   );
 };
 

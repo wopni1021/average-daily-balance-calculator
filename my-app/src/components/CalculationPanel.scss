@@ -1,0 +1,41 @@
+.adb-calculation-panel {
+  margin-top: 40px;
+  height: 400px;
+
+  &-form {
+    display: flex;
+    flex-direction: row;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Align vertically */
+    gap: 40px;
+
+    &-balance,
+    &-day {
+      display: flex;
+      flex-direction: column;
+
+      .MuiInputBase-root {
+        height: 40px;
+      }
+    }
+
+    &-label {
+      text-align: left;
+      font-weight: bold;
+      color: #333;
+      padding-bottom: 8px;
+      padding-right: 3px;
+      font-size: 13px;
+    }
+
+    &-button {
+      align-self: flex-end;
+    }
+  }
+
+  &-summary.MuiAlert-root {
+    margin: 30px 160px;
+    font-size: 16px;
+  }
+}

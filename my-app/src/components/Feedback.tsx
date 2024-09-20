@@ -2,7 +2,6 @@ import React from 'react';
 import './Feedback.scss';
 
 const ROOT = 'adb-feedback';
-const test = 3;
 
 const Feedback = () => {
   return (

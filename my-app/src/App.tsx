@@ -4,6 +4,7 @@ import Table from './components/MainTable';
 import Tab from './components/Tab';
 import Feedback from './components/Feedback';
 import Header from './components/Header';
+
 const App = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -12,15 +13,17 @@ const App = () => {
   };
 
   const renderPage = () => {
+    const mainPage = <Table />;
+
     switch (selectedTab) {
       case 0:
-        return <Table />;
+        return mainPage;
       case 1:
-        return null;
+        return <div>How to calculate adb.......</div>;
       case 2:
         return <Feedback />;
       default:
-        return <Table />;
+        return mainPage;
     }
   };
 

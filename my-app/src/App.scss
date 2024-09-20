@@ -8,7 +8,7 @@
 
   .header {
     background-color: black;
-    background-image: url("./Icons/header-bg.svg"); /* Icons by SVGBackgrounds.com */
+    background-image: url('./Icons/header-bg.svg'); /* Icons by SVGBackgrounds.com */
     background-size: cover;
     background-repeat: no-repeat; /* Prevents the background from repeating */
     background-position: center; /* Centers the SVG */
@@ -31,6 +31,8 @@
     width: 1000px;
     padding-bottom: 20px;
     align-self: center;
+    display: flex;
+    flex-direction: column;
   }
 }
 
