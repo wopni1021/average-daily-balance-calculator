@@ -67,7 +67,6 @@ const StyledTableRow = styled(TableRow)<StyledRow>(({ theme, day }) => ({
 }));
 
 // consts
-const MAX_DATE = 31;
 const MAX_NUM = 1000000000;
 const VALUE_DATE_WIDTH = 160;
 
@@ -77,10 +76,6 @@ const commonInputProps: Partial<TextFieldProps> = {
   size: 'small',
   variant: 'outlined',
 };
-
-const initialRows = [...Array(MAX_DATE)].map((_, idx) => {
-  return { withdraw: 0, depo: 0, balance: 0, adb: 0, day: idx + 1, subDay: 1 };
-});
 
 /*
  * Round to 2 decimals
@@ -97,10 +92,23 @@ const isValidDecimal = (value: string) => {
 };
 
 const MainTable = () => {
-  const firstDate = dayjs().date(1);
+  const firstDateOfCurrMonth = dayjs().date(1);
+  const numOfDay = dayjs().daysInMonth();
+  const initialRows = [...Array(numOfDay)].map((_, idx) => {
+    return {
+      withdraw: 0,
+      depo: 0,
+      balance: 0,
+      adb: 0,
+      day: idx + 1,
+      subDay: 1,
+    };
+  });
+
   const [rows, setRows] = useState<Rows>(initialRows);
   const [initialBalance, setInitialBalance] = useState<number>(0);
-  const [initialDate, setInitialDate] = useState<InitialDate>(firstDate);
+  const [initialDate, setInitialDate] =
+    useState<InitialDate>(firstDateOfCurrMonth);
 
   const handleChangeWithDr = (value: string, index: number) => {
     const val = Number(value);
@@ -320,6 +328,22 @@ const MainTable = () => {
     return allRows;
   };
 
+  // const dateSelector = (
+  //   <DatePicker onChange={handleChangeInitDate} value={initialDate} />
+  // );
+  // TODO: add date selector and allow user specify the number of days to calculate
+
+  const monthSelector = (
+    <DatePicker
+      views={['year', 'month']}
+      value={initialDate}
+      // onChange={handleDateChange}
+      minDate={dayjs('2020-01-01')} // You can set min/max dates if needed
+      maxDate={dayjs().add(5, 'year')}
+      format="MMMM YYYY" // Display format for the selected month
+    />
+  );
+
   const table = (
     <div className={ROOT}>
       <div className={`${ROOT}-init`}>
@@ -358,9 +382,9 @@ const MainTable = () => {
         </div>
 
         <div className={`${ROOT}-init-day`}>
-          <div className={`${ROOT}-init-label`}>Start Date</div>
+          <div className={`${ROOT}-init-label`}>Month</div>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker onChange={handleChangeInitDate} value={initialDate} />
+            {monthSelector}
           </LocalizationProvider>
         </div>
       </div>
