@@ -41,6 +41,14 @@ const CalculationPanel = (props: Props) => {
     if (!balance || !transferDate) return;
   };
 
+  const startOfMonth = props.initialDate?.startOf('month');
+  const endOfMonth = props.initialDate?.endOf('month');
+
+  const shouldDisableDate = (date: Dayjs) => {
+    // Disable dates that are outside of the current month of referenceDate
+    return date.isBefore(startOfMonth) || date.isAfter(endOfMonth);
+  };
+
   const form = (
     <div className={ROOT_FORM}>
       <div className={`${ROOT_FORM}-balance`}>
@@ -71,6 +79,7 @@ const CalculationPanel = (props: Props) => {
           <DatePicker
             onChange={handleChangeTransferDate}
             value={transferDate}
+            shouldDisableDate={shouldDisableDate}
           />
         </LocalizationProvider>
       </div>
