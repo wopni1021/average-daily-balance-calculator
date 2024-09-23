@@ -78,10 +78,10 @@ const commonInputProps: Partial<TextFieldProps> = {
 };
 
 /*
- * Round to 2 decimals
+ * Round down to 2 decimals
  */
 const formatNumber = (num: number) => {
-  return num.toFixed(2);
+  return Math.floor(num * 100) / 100;
 };
 
 /*
