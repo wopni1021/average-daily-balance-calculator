@@ -204,7 +204,40 @@ const MainTable = () => {
   };
 
   const handleChangeInitDate = (value: InitialDate) => {
+    const numOfDay = dayjs(value).daysInMonth();
+    const originalNumOfDay = rows.filter(
+      (row, idx) => row.day !== rows[idx - 1]?.day
+    ).length;
     setInitialDate(value);
+
+    if (numOfDay > originalNumOfDay) {
+      const prevLastRow = rows[rows.length - 1];
+      const prevLastBalance = prevLastRow.balance;
+      setRows((prevRows) => {
+        const dayDiff = numOfDay - originalNumOfDay;
+        const addedRows = [...Array(dayDiff)].map((_, idx) => {
+          const newDay = originalNumOfDay + idx + 1;
+          const newAdb =
+            (prevLastRow.adb * originalNumOfDay + prevLastBalance * (idx + 1)) /
+            newDay;
+          return {
+            withdraw: 0,
+            depo: 0,
+            balance: prevLastBalance,
+            adb: newAdb,
+            day: newDay,
+            subDay: 1,
+          };
+        });
+        let newRows = [...prevRows, ...addedRows];
+        return newRows;
+      });
+    } else if (numOfDay < originalNumOfDay) {
+      setRows((prevRows) => {
+        const newRows = prevRows.filter((row) => row.day <= numOfDay);
+        return newRows;
+      });
+    }
   };
 
   const onClickAddTransaction = (index: number) => {
@@ -337,7 +370,7 @@ const MainTable = () => {
     <DatePicker
       views={['year', 'month']}
       value={initialDate}
-      // onChange={handleDateChange}
+      onChange={handleChangeInitDate}
       minDate={dayjs('2020-01-01')} // You can set min/max dates if needed
       maxDate={dayjs().add(5, 'year')}
       format="MMMM YYYY" // Display format for the selected month
