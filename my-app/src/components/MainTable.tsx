@@ -468,7 +468,7 @@ const MainTable = () => {
     </div>
   );
 
-  const infoPanel = <CalculationPanel data={rows} initialDate={initialDate} />;
+  const infoPanel = <CalculationPanel rows={rows} initialDate={initialDate} />;
 
   return (
     <>

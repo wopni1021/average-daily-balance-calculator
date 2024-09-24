@@ -1,6 +1,7 @@
 .adb-calculation-panel {
   margin-top: 40px;
-  height: 400px;
+  height: 280px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
 
   &-form {
     display: flex;
@@ -9,6 +10,7 @@
     justify-content: center; /* Center horizontally */
     align-items: center; /* Align vertically */
     gap: 40px;
+    padding: 40px 0 0;
 
     &-balance,
     &-day {
@@ -37,5 +39,21 @@
   &-summary.MuiAlert-root {
     margin: 30px 160px;
     font-size: 16px;
+  }
+
+  &-summary {
+    &-action {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    &-amount {
+      font-weight: bold;
+    }
+    &-date {
+      font-weight: bold;
+    }
+    &-balance {
+      font-weight: bold;
+    }
   }
 }

@@ -12,7 +12,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { Rows, InitialDate } from '../types';
 
 type Props = {
-  data: Rows;
+  rows: Rows;
   initialDate: InitialDate;
 };
 
@@ -23,9 +23,14 @@ const CalculationPanel = (props: Props) => {
   const today = dayjs();
   const [balance, setBalance] = useState(0);
   const [transferDate, setTransferDate] = useState<Dayjs | null>(today);
-  const [conditions, setConditions] = useState({
+  const [result, setResult] = useState<{
+    balance: number | null;
+    transferDate: Dayjs | null;
+    transferAmount: number | null;
+  }>({
     balance: null,
     transferDate: null,
+    transferAmount: null,
   });
 
   const handleChangeBalance = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -39,6 +44,15 @@ const CalculationPanel = (props: Props) => {
 
   const onClickCalculate = () => {
     if (!balance || !transferDate) return;
+    const { rows } = props;
+    const numOfDay = transferDate.daysInMonth();
+    const newTotalBalance = balance * numOfDay;
+    const prevTotalBalance = rows[rows.length - 1].adb * numOfDay;
+    const balanceDiff = newTotalBalance - prevTotalBalance;
+    const dayIndex = transferDate.date();
+    const expectedTransfer = balanceDiff / (numOfDay - dayIndex + 1);
+    const transferAmount = Math.ceil(expectedTransfer * 100) / 100; // round up result
+    setResult({ balance, transferDate, transferAmount });
   };
 
   const startOfMonth = props.initialDate?.startOf('month');
@@ -87,6 +101,7 @@ const CalculationPanel = (props: Props) => {
         variant="outlined"
         className={`${ROOT_FORM}-button`}
         onClick={onClickCalculate}
+        disabled={!balance || !transferDate}
       >
         Calculate
       </Button>
@@ -94,10 +109,46 @@ const CalculationPanel = (props: Props) => {
   );
 
   const renderSummary = () => {
+    const { transferAmount, transferDate, balance } = result;
+    const preactionText =
+      transferAmount && transferAmount > 0 ? ' need to ' : ' can ';
+    const actionText =
+      transferAmount && transferAmount > 0 ? 'Deposit' : 'Withdraw';
+    const displayDate = transferDate?.format('MMMM DD');
+    const displayTransferAmount =
+      transferAmount &&
+      new Intl.NumberFormat().format(Math.abs(transferAmount));
+    const displayBalance = balance && new Intl.NumberFormat().format(balance);
+
+    if (transferAmount === 0) {
+      return (
+        <Alert severity="info" className={`${ROOT}-summary`}>
+          Everything Perfect! You don't need to make any changes and it will
+          still satisfy min. average balance as specified.
+        </Alert>
+      );
+    }
+    if (!transferAmount) return null;
+
     return (
       <Alert severity="info" className={`${ROOT}-summary`}>
-        You need to Deposit $10000 on xxx to maintain Average Daily Balance of
-        $3000 for selected month
+        <>
+          You{preactionText}
+          <span className={`${ROOT}-summary-action`}> {actionText} </span>
+          another
+          <span className={`${ROOT}-summary-amount`}>
+            {' '}
+            ${displayTransferAmount}{' '}
+          </span>
+          on
+          <span className={`${ROOT}-summary-date`}> {displayDate} </span> to
+          maintain Average Daily Balance of
+          <span className={`${ROOT}-summary-balance`}>
+            {' '}
+            ${displayBalance}
+          </span>{' '}
+          for selected month
+        </>
       </Alert>
     );
   };
