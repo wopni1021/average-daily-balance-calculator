@@ -1,0 +1,93 @@
+.adb-table {
+  display: flex;
+  flex-direction: column;
+  width: 998px;
+
+  &-tooltip {
+    fill: lightgrey !important;
+    cursor: pointer;
+  }
+
+  &-init {
+    display: flex;
+    padding: 40px 0 40px 0;
+    justify-content: center;
+    &-label {
+      text-align: left;
+      font-weight: bold;
+      color: #333;
+      padding-bottom: 8px;
+      padding-right: 3px;
+      font-size: 13px;
+    }
+    &-balance {
+      & .MuiTextField-root {
+        width: 245px;
+      }
+      &-label {
+        display: flex;
+      }
+      svg {
+        margin-top: -3px;
+      }
+    }
+    &-day {
+      margin-left: 40px;
+
+      input {
+        padding: 8.5px 14px;
+      }
+    }
+  }
+
+  &-th {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & .MuiTableContainer-root {
+    flex-grow: 1;
+  }
+
+  &-value-date {
+    display: flex;
+    align-items: center;
+
+    & .MuiTextField-root {
+      margin-left: 12px;
+    }
+
+    &-day {
+      flex-direction: column;
+      min-width: 50px; /* Adjust the size of the circle */
+      height: 50px;
+      background-color: rgb(137, 179, 137); /* Background color of the circle */
+      color: white; /* Text color */
+      display: flex;
+      align-items: center; /* Center content vertically */
+      justify-content: center; /* Center content horizontally */
+      border-radius: 50%; /* Makes the div a circle */
+      font-weight: bold; /* Makes the text bold */
+      font-size: 12px; /* Adjusts the text size */
+      &-num {
+        font-size: 16px; /* Adjusts the text size */
+      }
+    }
+
+    &-date {
+      margin-left: 12px;
+      font-weight: 500;
+      font-size: 16px;
+      color: rgb(95, 95, 95);
+    }
+  }
+
+  &-add-item {
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: rgb(24, 55, 191);
+    }
+  }
+}

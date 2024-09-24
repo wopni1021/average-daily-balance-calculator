@@ -1,17 +1,34 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import Table from "./components/Table";
+import React, { useState } from "react";
+import "./App.scss";
+import Table from "./components/MainTable";
+import Tab from "./components/Tab";
+import Feedback from "./components/Feedback";
+import Header from "./components/Header";
+const App = () => {
+  const [selectedTab, setSelectedTab] = useState(0);
 
-function App() {
+  const handleChangeTab = (newValue: number) => {
+    setSelectedTab(newValue);
+  };
+
+  const renderPage = () => {
+    switch (selectedTab) {
+      case 0:
+        return <Table />;
+      case 1:
+        return null;
+      case 2:
+        return <Feedback />;
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Table />
-      </header>
+      <Header />
+      <main className="main-content">{renderPage()}</main>
+      <Tab handleChange={handleChangeTab} />
     </div>
   );
-}
+};
 
 export default App;

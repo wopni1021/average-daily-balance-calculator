@@ -1,0 +1,13 @@
+.adb-feedback {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+
+  .google-form {
+    width: 100%; /* Makes the iframe take 100% width of the parent */
+    height: calc(100vh - 230px); /* Adjust height as needed */
+    max-width: 100%; /* Prevents overflow beyond container */
+    border: none; /* Removes any default border from the iframe */
+    outline: none; /* Removes any default focus outline */
+  }
+}
