@@ -2,7 +2,7 @@ import React from 'react';
 
 import HomeIcon from '@mui/icons-material/Home';
 import './Tab.scss';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+// import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -92,12 +92,12 @@ const IconTabs = (props: Props) => {
           </ListItemIcon>
           Main
         </MenuItem>
-        <MenuItem onClick={() => onClickMenuItem(1)}>
+        {/* <MenuItem onClick={() => onClickMenuItem(1)}>
           <ListItemIcon>
             <HelpCenterIcon fontSize="medium" />
           </ListItemIcon>
           Help
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={() => onClickMenuItem(2)}>
           <ListItemIcon>
             <RateReviewIcon fontSize="medium" />

@@ -110,135 +110,146 @@ const MainTable = () => {
   const [initialDate, setInitialDate] =
     useState<InitialDate>(firstDateOfCurrMonth);
 
-  const handleChangeWithDr = (value: string, index: number) => {
-    const val = Number(value);
-    if (val > MAX_NUM || !isValidDecimal(value)) return;
-    setRows((prevRows) => {
-      const rows = [] as Rows;
-      let total = 0;
-      prevRows.forEach((row, idx) => {
-        const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
+  const handleChangeWithDr = useCallback(
+    (value: string, index: number) => {
+      const val = Number(value);
+      if (val > MAX_NUM || !isValidDecimal(value)) return;
+      setRows((prevRows) => {
+        const rows = [] as Rows;
+        let total = 0;
+        prevRows.forEach((row, idx) => {
+          const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
 
-        if (idx < index) {
-          if (isLastSubRow) total += row.balance;
-          rows.push(row);
-        } else {
-          const prevBalance = rows[idx - 1]?.balance ?? initialBalance;
-          const isCurrentRow = idx === index;
-          const newWithdraw = isCurrentRow ? val : row.withdraw;
-          const newDepo = row.depo;
-          const newBalance = prevBalance - newWithdraw + newDepo;
+          if (idx < index) {
+            if (isLastSubRow) total += row.balance;
+            rows.push(row);
+          } else {
+            const prevBalance = rows[idx - 1]?.balance ?? initialBalance;
+            const isCurrentRow = idx === index;
+            const newWithdraw = isCurrentRow ? val : row.withdraw;
+            const newDepo = row.depo;
+            const newBalance = prevBalance - newWithdraw + newDepo;
+            if (isLastSubRow) total += newBalance;
+            const newAdb = total / row.day;
+            rows.push({
+              withdraw: newWithdraw,
+              depo: newDepo,
+              balance: newBalance,
+              adb: newAdb,
+              day: row.day,
+            });
+          }
+        });
+        return rows;
+      });
+    },
+    [initialBalance]
+  );
+
+  const handleChangeDepo = useCallback(
+    (value: string, index: number) => {
+      const val = Number(value);
+      if (val > MAX_NUM || !isValidDecimal(value)) return;
+      setRows((prevRows) => {
+        const rows = [] as Rows;
+        let total = 0;
+        prevRows.forEach((row, idx) => {
+          const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
+
+          if (idx < index) {
+            if (isLastSubRow) total += row.balance;
+            rows.push(row);
+          } else {
+            const prevBalance = rows[idx - 1]?.balance ?? initialBalance;
+            const isCurrentRow = idx === index;
+            const newDepo = isCurrentRow ? val : row.depo;
+            const newWithdraw = row.withdraw;
+            const newBalance = prevBalance - newWithdraw + newDepo;
+            if (isLastSubRow) total += newBalance;
+            const newAdb = total / row.day;
+            rows.push({
+              withdraw: newWithdraw,
+              depo: newDepo,
+              balance: newBalance,
+              adb: newAdb,
+              day: row.day,
+            });
+          }
+        });
+        return rows;
+      });
+    },
+    [initialBalance]
+  );
+
+  const handleChangeInitialBalance = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const val = Number(e.target.value);
+      setInitialBalance(val);
+
+      setRows((prevRows) => {
+        const rows = [] as Rows;
+        let total = 0;
+        prevRows.forEach((row, idx) => {
+          const prevBalance = rows[idx - 1]?.balance ?? val;
+          const newBalance = prevBalance - row.withdraw + row.depo;
+          const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
           if (isLastSubRow) total += newBalance;
           const newAdb = total / row.day;
           rows.push({
-            withdraw: newWithdraw,
-            depo: newDepo,
+            withdraw: row.withdraw,
+            depo: row.depo,
             balance: newBalance,
             adb: newAdb,
             day: row.day,
           });
-        }
+        });
+        return rows;
       });
-      return rows;
-    });
-  };
+    },
+    []
+  );
 
-  const handleChangeDepo = (value: string, index: number) => {
-    const val = Number(value);
-    if (val > MAX_NUM || !isValidDecimal(value)) return;
-    setRows((prevRows) => {
-      const rows = [] as Rows;
-      let total = 0;
-      prevRows.forEach((row, idx) => {
-        const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
+  const handleChangeInitDate = useCallback(
+    (value: InitialDate) => {
+      const numOfDay = dayjs(value).daysInMonth();
+      const originalNumOfDay = rows.filter(
+        (row, idx) => row.day !== rows[idx - 1]?.day
+      ).length;
+      setInitialDate(value);
 
-        if (idx < index) {
-          if (isLastSubRow) total += row.balance;
-          rows.push(row);
-        } else {
-          const prevBalance = rows[idx - 1]?.balance ?? initialBalance;
-          const isCurrentRow = idx === index;
-          const newDepo = isCurrentRow ? val : row.depo;
-          const newWithdraw = row.withdraw;
-          const newBalance = prevBalance - newWithdraw + newDepo;
-          if (isLastSubRow) total += newBalance;
-          const newAdb = total / row.day;
-          rows.push({
-            withdraw: newWithdraw,
-            depo: newDepo,
-            balance: newBalance,
-            adb: newAdb,
-            day: row.day,
+      if (numOfDay > originalNumOfDay) {
+        const prevLastRow = rows[rows.length - 1];
+        const prevLastBalance = prevLastRow.balance;
+        setRows((prevRows) => {
+          const dayDiff = numOfDay - originalNumOfDay;
+          const addedRows = [...Array(dayDiff)].map((_, idx) => {
+            const newDay = originalNumOfDay + idx + 1;
+            const newAdb =
+              (prevLastRow.adb * originalNumOfDay +
+                prevLastBalance * (idx + 1)) /
+              newDay;
+            return {
+              withdraw: 0,
+              depo: 0,
+              balance: prevLastBalance,
+              adb: newAdb,
+              day: newDay,
+              subDay: 1,
+            };
           });
-        }
-      });
-      return rows;
-    });
-  };
-
-  const handleChangeInitialBalance = (
-    e: React.FocusEvent<HTMLInputElement>
-  ) => {
-    const val = Number(e.target.value);
-    setInitialBalance(val);
-
-    setRows((prevRows) => {
-      const rows = [] as Rows;
-      let total = 0;
-      prevRows.forEach((row, idx) => {
-        const prevBalance = rows[idx - 1]?.balance ?? val;
-        const newBalance = prevBalance - row.withdraw + row.depo;
-        const isLastSubRow = row.day !== prevRows[idx + 1]?.day; // only the final balance of the day should be calculated towards adb
-        if (isLastSubRow) total += newBalance;
-        const newAdb = total / row.day;
-        rows.push({
-          withdraw: row.withdraw,
-          depo: row.depo,
-          balance: newBalance,
-          adb: newAdb,
-          day: row.day,
+          const newRows = [...prevRows, ...addedRows];
+          return newRows;
         });
-      });
-      return rows;
-    });
-  };
-
-  const handleChangeInitDate = (value: InitialDate) => {
-    const numOfDay = dayjs(value).daysInMonth();
-    const originalNumOfDay = rows.filter(
-      (row, idx) => row.day !== rows[idx - 1]?.day
-    ).length;
-    setInitialDate(value);
-
-    if (numOfDay > originalNumOfDay) {
-      const prevLastRow = rows[rows.length - 1];
-      const prevLastBalance = prevLastRow.balance;
-      setRows((prevRows) => {
-        const dayDiff = numOfDay - originalNumOfDay;
-        const addedRows = [...Array(dayDiff)].map((_, idx) => {
-          const newDay = originalNumOfDay + idx + 1;
-          const newAdb =
-            (prevLastRow.adb * originalNumOfDay + prevLastBalance * (idx + 1)) /
-            newDay;
-          return {
-            withdraw: 0,
-            depo: 0,
-            balance: prevLastBalance,
-            adb: newAdb,
-            day: newDay,
-            subDay: 1,
-          };
+      } else if (numOfDay < originalNumOfDay) {
+        setRows((prevRows) => {
+          const newRows = prevRows.filter((row) => row.day <= numOfDay);
+          return newRows;
         });
-        let newRows = [...prevRows, ...addedRows];
-        return newRows;
-      });
-    } else if (numOfDay < originalNumOfDay) {
-      setRows((prevRows) => {
-        const newRows = prevRows.filter((row) => row.day <= numOfDay);
-        return newRows;
-      });
-    }
-  };
+      }
+    },
+    [rows]
+  );
 
   const onClickAddTransaction = (index: number) => {
     setRows((prevRows) => {
