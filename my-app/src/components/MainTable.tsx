@@ -7,6 +7,7 @@ import TableCell, {
 } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
+import { useMediaQuery } from '@mui/material';
 import TableRow, { TableRowProps } from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
@@ -22,7 +23,7 @@ import dayjs from 'dayjs';
 import Tooltip from '@mui/material/Tooltip';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import CalculationPanel from './CalculationPanel';
-import { Rows, InitialDate } from '../types';
+import { Rows, InitialDate, Row } from '../types';
 
 // types
 interface FixedWidthTableCellProps extends TableCellProps {
@@ -92,6 +93,7 @@ const isValidDecimal = (value: string) => {
 };
 
 const MainTable = () => {
+  const isMobile = useMediaQuery('(max-width:600px)');
   const firstDateOfCurrMonth = dayjs().date(1);
   const numOfDay = dayjs().daysInMonth();
   const initialRows = [...Array(numOfDay)].map((_, idx) => {
@@ -265,6 +267,165 @@ const MainTable = () => {
   };
 
   const renderRows = () => {
+    const renderDay = (row: Row, index: number) => {
+      const isMainDay = row.day !== rows[index - 1]?.day;
+      if (isMobile) {
+        return (
+          isMainDay && (
+            <div className={`${ROOT}-value-date-mobile`}>
+              {initialDate?.isValid() && (
+                <span className={`${ROOT}-value-date-mobile-date`}>
+                  {initialDate
+                    .add(row.day - 1, 'day')
+                    .toDate()
+                    .toLocaleDateString()}
+                </span>
+              )}
+              {renderAddIcon(row, index)}
+            </div>
+          )
+        );
+      }
+      return (
+        isMainDay && (
+          <div className={`${ROOT}-value-date`}>
+            <div className={`${ROOT}-value-date-day`}>
+              <div>Day</div>{' '}
+              <div className={`${ROOT}-value-date-day-num`}>{row.day}</div>
+            </div>
+            {initialDate?.isValid() && (
+              <span className={`${ROOT}-value-date-date`}>
+                {initialDate
+                  .add(row.day - 1, 'day')
+                  .toDate()
+                  .toLocaleDateString()}
+              </span>
+            )}
+          </div>
+        )
+      );
+    };
+
+    const renderWidthdrawInput = (row: Row, index: number) => {
+      return (
+        <TextField
+          {...commonInputProps}
+          id="withdr"
+          variant="outlined"
+          type="number"
+          label={isMobile ? 'Withdrawal' : ''}
+          onChange={(e) => {
+            handleChangeWithDr(e.target.value, index);
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">- $</InputAdornment>
+              ),
+              inputProps: { style: { textAlign: 'right' } },
+            },
+          }}
+          value={row.withdraw || ''}
+        />
+      );
+    };
+
+    const renderDepositInput = (row: Row, index: number) => {
+      return (
+        <TextField
+          {...commonInputProps}
+          id="depo"
+          variant="outlined"
+          type="number"
+          label={isMobile ? 'Deposit' : ''}
+          onChange={(e) => {
+            handleChangeDepo(e.target.value, index);
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">+ $</InputAdornment>
+              ),
+              inputProps: { style: { textAlign: 'right' } },
+            },
+          }}
+          value={row.depo || ''}
+          className={`${ROOT}-deposit`}
+        />
+      );
+    };
+
+    const renderAddIcon = (_row: Row, index: number) => {
+      return (
+        <Tooltip
+          className={`${ROOT}-tooltip`}
+          title="Add more transaction to the day"
+          slotProps={{
+            tooltip: {
+              sx: {
+                fontSize: '16px',
+                padding: '8px',
+              },
+            },
+          }}
+        >
+          <IconButton
+            onClick={() => {
+              onClickAddTransaction(index);
+            }}
+            size="small"
+            sx={{ ml: 2 }}
+            aria-haspopup="false"
+            className={`${ROOT}-add-item`}
+          >
+            <AddCircleOutlineOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      );
+    };
+
+    if (isMobile) {
+      const allRows = rows.map((row, index) => (
+        <div className={`${ROOT}-card`}>
+          <div className={`${ROOT}-row-header`}>{renderDay(row, index)}</div>
+          <div>
+            {renderWidthdrawInput(row, index)}
+            {renderDepositInput(row, index)}
+          </div>
+          {row.day !== rows[index + 1]?.day && (
+            <>
+              <div className={`${ROOT}-value`}>
+                <div className={`${ROOT}-value-field`}>
+                  <div className={`${ROOT}-value-label`}>Balance </div>
+                  {row.day !== rows[index + 1]?.day &&
+                    formatNumber(row.balance)}
+                </div>
+
+                <div className={`${ROOT}-value-field`}>
+                  <div className={`${ROOT}-value-label`}>
+                    Average Daily Balance{' '}
+                  </div>
+                  {formatNumber(row.adb)}
+                </div>
+              </div>
+              {index !== rows.length - 1 && (
+                <hr
+                  style={{
+                    border: 'none',
+                    borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+                    width: '85%',
+                  }}
+                />
+              )}
+            </>
+          )}
+        </div>
+      ));
+
+      return allRows;
+    }
+
+    // if PC
     const allRows = rows.map((row, index) => (
       <StyledTableRow
         key={`${row.day}-${index}`}
@@ -276,62 +437,13 @@ const MainTable = () => {
           scope="row"
           fixedWidth={VALUE_DATE_WIDTH}
         >
-          {row.day !== rows[index - 1]?.day && (
-            <div className={`${ROOT}-value-date`}>
-              <div className={`${ROOT}-value-date-day`}>
-                <div>Day</div>{' '}
-                <div className={`${ROOT}-value-date-day-num`}>{row.day}</div>
-              </div>
-              {initialDate?.isValid() && (
-                <span className={`${ROOT}-value-date-date`}>
-                  {initialDate
-                    .add(row.day - 1, 'day')
-                    .toDate()
-                    .toLocaleDateString()}
-                </span>
-              )}
-            </div>
-          )}
+          {renderDay(row, index)}
         </StyledTableCell>
         <StyledTableCell align="right">
-          <TextField
-            {...commonInputProps}
-            id="withdr"
-            variant="outlined"
-            type="number"
-            onChange={(e) => {
-              handleChangeWithDr(e.target.value, index);
-            }}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">- $</InputAdornment>
-                ),
-                inputProps: { style: { textAlign: 'right' } },
-              },
-            }}
-            value={row.withdraw || ''}
-          />
+          {renderWidthdrawInput(row, index)}
         </StyledTableCell>
         <StyledTableCell align="right">
-          <TextField
-            {...commonInputProps}
-            id="depo"
-            variant="outlined"
-            type="number"
-            onChange={(e) => {
-              handleChangeDepo(e.target.value, index);
-            }}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">+ $</InputAdornment>
-                ),
-                inputProps: { style: { textAlign: 'right' } },
-              },
-            }}
-            value={row.depo || ''}
-          />
+          {renderDepositInput(row, index)}
         </StyledTableCell>
         <StyledTableCell align="right">
           {row.day !== rows[index + 1]?.day && formatNumber(row.balance)}
@@ -340,32 +452,7 @@ const MainTable = () => {
           {row.day !== rows[index + 1]?.day && formatNumber(row.adb)}
         </StyledTableCell>
         <StyledTableCell align="right">
-          {row.day !== rows[index + 1]?.day && (
-            <Tooltip
-              className={`${ROOT}-tooltip`}
-              title="Add more transaction to the day"
-              slotProps={{
-                tooltip: {
-                  sx: {
-                    fontSize: '16px',
-                    padding: '8px',
-                  },
-                },
-              }}
-            >
-              <IconButton
-                onClick={() => {
-                  onClickAddTransaction(index);
-                }}
-                size="small"
-                sx={{ ml: 2 }}
-                aria-haspopup="false"
-                className={`${ROOT}-add-item`}
-              >
-                <AddCircleOutlineOutlinedIcon />
-              </IconButton>
-            </Tooltip>
-          )}
+          {row.day !== rows[index + 1]?.day && renderAddIcon(row, index)}
         </StyledTableCell>
       </StyledTableRow>
     ));
@@ -394,20 +481,22 @@ const MainTable = () => {
         <div className={`${ROOT}-init-balance`}>
           <div className={`${ROOT}-init-balance-label`}>
             <div className={`${ROOT}-init-label`}>Initial Balance</div>
-            <Tooltip
-              className={`${ROOT}-tooltip`}
-              title="The closing balance in the statement of previous month"
-              slotProps={{
-                tooltip: {
-                  sx: {
-                    fontSize: '16px',
-                    padding: '8px',
+            {!isMobile && (
+              <Tooltip
+                className={`${ROOT}-tooltip`}
+                title="The closing balance in the statement of previous month"
+                slotProps={{
+                  tooltip: {
+                    sx: {
+                      fontSize: '16px',
+                      padding: '8px',
+                    },
                   },
-                },
-              }}
-            >
-              <HelpIcon />
-            </Tooltip>
+                }}
+              >
+                <HelpIcon />
+              </Tooltip>
+            )}
           </div>
           <TextField
             {...commonInputProps}
@@ -434,45 +523,48 @@ const MainTable = () => {
       </div>
 
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
-          <TableHead>
-            <StyledTableRow>
-              <StyledTableCell fixedWidth={VALUE_DATE_WIDTH}>
-                Value Date
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                <div className={`${ROOT}-th`}>
-                  <span>Withdrawal</span>
-                </div>
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                <div className={`${ROOT}-th`}>
-                  <span>Deposit</span>
-                </div>
-              </StyledTableCell>
-              <StyledTableCell align="right">Balance</StyledTableCell>
-              <StyledTableCell align="right">
-                <div className={`${ROOT}-th`}>
-                  <div>Average Daily Balance</div>
-                  <Tooltip
-                    className={`${ROOT}-tooltip`}
-                    title="Do take notes of the number of days in a month to predict the ADB accurately. For example, if you want to calculate the final ADB in April, you should refer to Day 30 or April 30th"
-                    slotProps={{
-                      tooltip: {
-                        sx: {
-                          fontSize: '16px',
-                          padding: '8px',
+        <Table aria-label="simple table" stickyHeader>
+          {!isMobile && (
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell fixedWidth={VALUE_DATE_WIDTH}>
+                  Value Date
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <div className={`${ROOT}-th`}>
+                    <span>Withdrawal</span>
+                  </div>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <div className={`${ROOT}-th`}>
+                    <span>Deposit</span>
+                  </div>
+                </StyledTableCell>
+                <StyledTableCell align="right">Balance</StyledTableCell>
+                <StyledTableCell align="right">
+                  <div className={`${ROOT}-th`}>
+                    <div>Average Daily Balance</div>
+                    <Tooltip
+                      className={`${ROOT}-tooltip`}
+                      title="Do take notes of the number of days in a month to predict the ADB accurately. For example, if you want to calculate the final ADB in April, you should refer to Day 30 or April 30th"
+                      slotProps={{
+                        tooltip: {
+                          sx: {
+                            fontSize: '16px',
+                            padding: '8px',
+                          },
                         },
-                      },
-                    }}
-                  >
-                    <HelpIcon />
-                  </Tooltip>
-                </div>
-              </StyledTableCell>
-              <StyledTableCell align="right" />
-            </StyledTableRow>
-          </TableHead>
+                      }}
+                    >
+                      <HelpIcon />
+                    </Tooltip>
+                  </div>
+                </StyledTableCell>
+                <StyledTableCell align="right" />
+              </StyledTableRow>
+            </TableHead>
+          )}
+
           <TableBody>{renderRows()}</TableBody>
         </Table>
       </TableContainer>

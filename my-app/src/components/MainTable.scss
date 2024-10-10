@@ -91,3 +91,84 @@
     }
   }
 }
+
+@media (max-width: 600px) {
+  .adb-table {
+    width: auto;
+    &-init-day,
+    &-init-balance .MuiTextField-root {
+      width: 140px;
+    }
+
+    .MuiTextField-root {
+      width: 140px;
+    }
+
+    .MuiPaper-root {
+      padding-top: 30px;
+    }
+
+    &-value {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      &-field {
+        width: 140px;
+        max-width: 140px;
+        text-align: right;
+        padding: 12px;
+        font-weight: 600;
+      }
+
+      &-label {
+        text-align: left;
+        color: rgba(0, 0, 0, 0.6);
+        font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 1.4375em;
+        letter-spacing: 0.00938em;
+      }
+    }
+
+    &-deposit {
+      margin-left: 20px !important;
+    }
+
+    &-init {
+      background-color: rgba(0, 0, 0, 0.018);
+      &-day {
+        margin-left: 20px !important;
+      }
+    }
+
+    &-value-date-mobile {
+      padding: 0 0 20px;
+      margin: 0px 35px 0 35px;
+      font-weight: bold;
+      text-align: left;
+
+      &-day {
+        background-color: rgb(137, 179, 137);
+        border-radius: 10px;
+        padding: 6px;
+        color: white;
+      }
+      &-date {
+        background-color: rgb(137, 179, 137);
+        border-radius: 10px;
+        padding: 6px;
+        color: white;
+      }
+    }
+
+    &-add-item {
+      margin-left: 20px !important;
+      font-size: 11px !important;
+    }
+
+    &-card {
+      padding-bottom: 12px;
+    }
+  }
+}
