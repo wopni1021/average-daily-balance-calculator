@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs';
 
-interface Row {
+export interface Row {
   withdraw: number;
   depo: number;
   balance: number;
