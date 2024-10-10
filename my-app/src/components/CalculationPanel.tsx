@@ -66,9 +66,7 @@ const CalculationPanel = (props: Props) => {
   const form = (
     <div className={ROOT_FORM}>
       <div className={`${ROOT_FORM}-balance`}>
-        <div className={`${ROOT_FORM}-label`}>
-          Min. Average Daily Balance to Maintain
-        </div>
+        <div className={`${ROOT_FORM}-label`}>Min. ADB to Maintain</div>
         <TextField
           size="small"
           variant="outlined"

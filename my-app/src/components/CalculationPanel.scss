@@ -57,3 +57,37 @@
     }
   }
 }
+
+@media (max-width: 600px) {
+  .MuiTextField-root {
+    width: 140px;
+  }
+  .adb-calculation-panel {
+    height: 350px !important;
+    margin-top: 0;
+    box-shadow: none !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+
+    &-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+
+      &-day,
+      &-balance {
+        flex: 1 1 50%;
+        align-items: center;
+      }
+
+      &-button {
+        flex-basis: 100%;
+        margin: 30px !important;
+        height: 40px;
+      }
+    }
+
+    &-summary {
+      margin: 0 20px !important;
+    }
+  }
+}
